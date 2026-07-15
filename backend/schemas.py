@@ -12,3 +12,10 @@ class ProgressInput(BaseModel):
     quest: Quest
     current_spend: float
     current_day: int
+    
+class MotivationInput(BaseModel):
+    status: str
+    gap: float
+    days_left: int
+    summary: str
+    recovery_quest: str

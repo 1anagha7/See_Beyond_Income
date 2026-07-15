@@ -12,7 +12,7 @@ from prompts import behavior_prompt
 # -------------------------------------------------------
 
 client = genai.Client(api_key=GEMINI_API_KEY)
-
+MODEL_NAME = "gemini-2.5-flash"
 
 class BehaviorAgent:
     """
@@ -71,7 +71,7 @@ class BehaviorAgent:
         try:
 
             response = client.models.generate_content(
-                model="gemini-2.5-flash",
+                model = MODEL_NAME,
                 contents=prompt
             )
 
@@ -118,7 +118,15 @@ class BehaviorAgent:
 
             return {
                 "progress": progress,
-                "recovery": recovery
+                "recovery": recovery,
+
+                "motivation_input": {
+                    "status": progress["status"],
+                    "gap": progress["gap"],
+                    "days_left": progress["days_left"],
+                    "summary": recovery["summary"],
+                    "recovery_quest": recovery["recovery_quest"]
+                }
             }
 
         return {
