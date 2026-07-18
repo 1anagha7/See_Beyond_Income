@@ -1,11 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from schemas import ProgressInput, TransactionHistoryInput, LearningInput
-from behavior_agent import BehaviorAgent
-from goal_agent import GoalAgent
-from learning_agent import LearningAgent
+from api import router as api_router
+import database
 
-app = FastAPI()
+# Initialize database tables and seed data
+database.init_db()
+
+app = FastAPI(title="SBI See Beyond Income Platform API")
 
 # Enable CORS for frontend integration
 app.add_middleware(
@@ -16,18 +17,5 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-behavior_agent = BehaviorAgent()
-goal_agent = GoalAgent()
-learning_agent = LearningAgent()
-
-@app.post("/check-progress")
-def check_progress(data: ProgressInput):
-    return behavior_agent.run(data)
-
-@app.post("/generate-quest")
-def generate_quest(data: TransactionHistoryInput):
-    return goal_agent.run(data)
-
-@app.post("/generate-learning-card")
-def generate_learning_card(data: LearningInput):
-    return learning_agent.run(data)
+# Include database-backed LangGraph-integrated API router
+app.include_router(api_router)

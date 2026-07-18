@@ -11,7 +11,13 @@ from prompts import behavior_prompt
 # Initialize Gemini Client
 # -------------------------------------------------------
 
-client = genai.Client(api_key=GEMINI_API_KEY)
+client = None
+if GEMINI_API_KEY:
+    try:
+        client = genai.Client(api_key=GEMINI_API_KEY)
+    except Exception as e:
+        print(f"[BehaviorAgent Client Init Error] {e}")
+
 MODEL_NAME = "gemini-2.5-flash"
 
 class BehaviorAgent:
@@ -69,7 +75,8 @@ class BehaviorAgent:
     """
 
         try:
-
+            if not client:
+                raise ValueError("Gemini API Client is uninitialized (missing GEMINI_API_KEY).")
             response = client.models.generate_content(
                 model = MODEL_NAME,
                 contents=prompt

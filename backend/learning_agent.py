@@ -4,7 +4,13 @@ from schemas import LearningInput
 from config import GEMINI_API_KEY
 from prompts import learning_prompt
 
-client = genai.Client(api_key=GEMINI_API_KEY)
+client = None
+if GEMINI_API_KEY:
+    try:
+        client = genai.Client(api_key=GEMINI_API_KEY)
+    except Exception as e:
+        print(f"[LearningAgent Client Init Error] {e}")
+
 MODEL_NAME = "gemini-2.5-flash"
 
 class LearningAgent:
@@ -27,6 +33,8 @@ Product Name: {data.product_name}
 """
 
         try:
+            if not client:
+                raise ValueError("Gemini API Client is uninitialized (missing GEMINI_API_KEY).")
             response = client.models.generate_content(
                 model=MODEL_NAME,
                 contents=prompt
