@@ -3,135 +3,478 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SBI See Beyond Income - Goal & Learning Intelligence</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>SBI See Beyond Income - Financial Behavior & Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN for Admin Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="glass-bg"></div>
-    <div class="app-container">
-        <header class="app-header">
+
+    <!-- 1. LOGIN PORTAL -->
+    <div id="login-screen" class="login-container visible">
+        <div class="glass-card login-card text-center">
             <div class="logo">
                 <span class="sbi-blue">SBI</span> <span class="accent-text">SeeBeyondIncome</span>
             </div>
             <p class="tagline">Empowering financial growth through behavioral intelligence</p>
+            
+            <div class="login-options">
+                <h3>Select Portal Access</h3>
+                <button id="btn-login-customer" class="btn primary-btn pulse-glow">
+                    👤 Access Customer Portal
+                </button>
+                <button id="btn-login-bank" class="btn secondary-btn">
+                    🏢 Access Bank Admin Dashboard
+                </button>
+            </div>
+            
+            <div class="pricing-model-preview">
+                <h4>White-Label Platform Commercial Model:</h4>
+                <ul>
+                    <li>🎯 Performance pricing per successful product activation</li>
+                    <li>📊 Premium behavioral analytics SaaS integration</li>
+                    <li>💎 Frictionless deep-links for digital YONO adoption</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MAIN APPLICATION CONTAINER -->
+    <div id="app-container" class="app-container hidden">
+        <!-- HEADER & NAVIGATION -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo small-logo">
+                    <span class="sbi-blue">SBI</span> <span class="accent-text">SeeBeyondIncome</span>
+                </div>
+                <span id="role-badge" class="role-badge">Customer</span>
+            </div>
+            
+            <nav id="customer-nav" class="nav-tabs">
+                <button class="nav-tab active" data-tab="cust-dashboard">📊 Dashboard</button>
+                <button class="nav-tab" data-tab="cust-quest">🎯 Quests & Spend</button>
+                <button class="nav-tab" data-tab="cust-whatsapp">💬 WhatsApp Simulator</button>
+                <button class="nav-tab" data-tab="cust-yono">🎁 YONO Unlock</button>
+            </nav>
+            
+            <nav id="bank-nav" class="nav-tabs hidden">
+                <button class="nav-tab active" data-tab="bank-dashboard">📈 Analytics</button>
+                <button class="nav-tab" data-tab="bank-customers">👥 Customer Directory</button>
+            </nav>
+
+            <div class="header-right">
+                <button id="btn-logout" class="btn secondary-btn btn-sm">🚪 Logout</button>
+            </div>
         </header>
 
-        <main class="dashboard-grid">
-            <!-- Left Panel: Transaction Input -->
-            <section class="panel transaction-panel glass-card">
-                <h2>📊 Mock Transaction History</h2>
-                <p class="panel-desc">Modify transactions below to test how the Goal Agent adapts its quest recommendations.</p>
+        <!-- CUSTOMER PORTAL -->
+        <main id="customer-portal" class="portal-view">
+            <!-- Gamification Profile Bar -->
+            <section class="profile-gamification-bar glass-card">
+                <div class="user-info">
+                    <div class="avatar">👨‍💻</div>
+                    <div>
+                        <h2 id="profile-name">Akshaya</h2>
+                        <p class="membership-level">SBI Premium Member</p>
+                    </div>
+                </div>
                 
-                <div class="table-container">
-                    <table id="transactions-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Category</th>
-                                <th>Description</th>
-                                <th>Amount (₹)</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Loaded dynamically via JS -->
-                        </tbody>
-                    </table>
+                <div class="gamification-item level-container">
+                    <span class="label">Level</span>
+                    <span class="value" id="profile-level">1</span>
                 </div>
 
-                <div class="button-group">
-                    <button id="add-row-btn" class="btn secondary-btn">+ Add Transaction</button>
-                    <button id="generate-quest-btn" class="btn primary-btn pulse-glow">Analyze & Generate Quest</button>
-                </div>
-            </section>
-
-            <!-- Right Panel: Dynamic Display -->
-            <section class="panel display-panel">
-                <!-- Idle State Message -->
-                <div id="idle-card" class="glass-card info-card">
-                    <div class="info-icon">🔮</div>
-                    <h3>Start Your Journey</h3>
-                    <p>Click <strong>Analyze & Generate Quest</strong> to let our AI Goal Agent inspect your spending footprint, build a personalized budget challenge, and select a reward product.</p>
-                </div>
-
-                <!-- Loader -->
-                <div id="loader" class="loader-container hidden">
-                    <div class="spinner"></div>
-                    <p id="loader-text">Analyzing financial footprint...</p>
-                </div>
-
-                <!-- Quest Card -->
-                <div id="quest-card" class="glass-card result-card hidden">
-                    <div class="card-badge">ACTIVE QUEST</div>
-                    <h3 id="quest-category-title">🎯 Food & Dining Quest</h3>
-                    <p id="quest-analysis" class="analysis-text"></p>
-                    
-                    <div class="quest-details">
-                        <div class="detail-item">
-                            <span class="label">Target Limit</span>
-                            <span class="value" id="quest-target">₹3,000</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="label">Reduction</span>
-                            <span class="value accent" id="quest-reduction">20% Off</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="label">Duration</span>
-                            <span class="value" id="quest-duration">7 Days</span>
-                        </div>
+                <div class="gamification-item xp-container">
+                    <div class="xp-labels">
+                        <span class="label">Experience Point (XP)</span>
+                        <span class="xp-val" id="profile-xp-text">150 / 1000 XP</span>
                     </div>
-
-                    <div class="reward-preview">
-                        🎁 Potential Reward: <strong id="quest-reward-name">SBI Mutual Fund SIP</strong>
-                    </div>
-
-                    <div class="card-actions">
-                        <button id="complete-quest-btn" class="btn success-btn">Simulate Quest Completion</button>
+                    <div class="xp-progress-bar">
+                        <div id="profile-xp-fill" class="xp-progress-fill" style="width: 15%;"></div>
                     </div>
                 </div>
 
-                <!-- Product Unlock Screen -->
-                <div id="unlock-screen" class="glass-card success-card hidden">
-                    <div class="confetti-effect">🎉</div>
-                    <h2>Quest Accomplished!</h2>
-                    <p class="success-desc">Excellent control on your spending. You have successfully unlocked your investment reward tier!</p>
-                    
-                    <div class="unlocked-badge">
-                        <div class="shield-icon">🛡️</div>
-                        <h3 id="unlocked-product-title">SBI Mutual Fund SIP</h3>
-                        <p>Reward Product Ready for Activation</p>
-                    </div>
-
-                    <button id="unlock-learning-btn" class="btn primary-btn">Reveal Product Card & Explainer</button>
+                <div class="gamification-item streak-container">
+                    <span class="label">Daily Streak</span>
+                    <span class="value fire-streak">🔥 <span id="profile-streak">3</span> Days</span>
                 </div>
 
-                <!-- Learning Card -->
-                <div id="learning-card" class="glass-card learning-card-style hidden">
-                    <div class="learning-badge">LEARNING GATE UNLOCKED</div>
-                    <h3 id="learn-product-name">SBI Mutual Fund SIP</h3>
-                    <p id="learn-product-subtitle" class="product-subtitle">Smart wealth creation in tiny steps</p>
-                    
-                    <div class="explainer-section">
-                        <h4>⚡ 30-Second Explainer</h4>
-                        <p id="learn-explainer"></p>
-                    </div>
-
-                    <div class="benefits-section">
-                        <h4>💎 Key Benefits</h4>
-                        <ul id="learn-benefits-list">
-                            <!-- Populated via JS -->
-                        </ul>
-                    </div>
-
-                    <div class="card-actions">
-                        <button id="invest-now-btn" class="btn primary-btn">Start Investing Now</button>
-                        <button id="reset-flow-btn" class="btn secondary-btn">Restart Journey</button>
-                    </div>
+                <div class="gamification-item savings-container">
+                    <span class="label">Total savings redirect</span>
+                    <span class="value success-color">₹<span id="profile-savings">1,250.00</span></span>
                 </div>
             </section>
+
+            <!-- CUSTOMER TAB CONTENTS -->
+            <div class="tab-content-container">
+                
+                <!-- TAB: Customer Dashboard -->
+                <div id="cust-dashboard" class="tab-panel active">
+                    <div class="dashboard-layout">
+                        <div class="dash-column-left">
+                            <div class="glass-card">
+                                <h3>🎯 Active Quest Summary</h3>
+                                <div id="dash-active-quest-container">
+                                    <!-- Populated via JS -->
+                                </div>
+                            </div>
+                            
+                            <div class="glass-card quick-links">
+                                <h3>⚡ Quick Savings Actions</h3>
+                                <p>Simulate transaction behaviors to see how your Financial Behavioral Coach responds.</p>
+                                <div class="action-buttons">
+                                    <button id="quick-action-quest" class="btn primary-btn btn-full">Go to Quests</button>
+                                    <button id="quick-action-whatsapp" class="btn secondary-btn btn-full">Check WhatsApp Coach</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dash-column-right">
+                            <div class="glass-card notifications-panel">
+                                <h3>💬 WhatsApp Coach Notifications</h3>
+                                <div class="notifications-list" id="dash-notifications-list">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: Quests & Spend -->
+                <div id="cust-quest" class="tab-panel">
+                    <div class="quest-layout">
+                        <!-- Left Panel: Transaction Input -->
+                        <div class="glass-card transaction-panel">
+                            <h2>📊 Mock Transaction History</h2>
+                            <p class="panel-desc">Modify transactions below to test how the Goal Agent adapts its quest recommendations.</p>
+                            
+                            <div class="table-container">
+                                <table id="transactions-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Category</th>
+                                            <th>Description</th>
+                                            <th>Amount (₹)</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Loaded dynamically via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="button-group">
+                                <button id="add-row-btn" class="btn secondary-btn">+ Add Transaction</button>
+                                <button id="generate-quest-btn" class="btn primary-btn pulse-glow">Analyze & Generate Quest</button>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Dynamic Display -->
+                        <div class="display-panel-wrapper">
+                            <!-- Idle State Message -->
+                            <div id="idle-card" class="glass-card info-card">
+                                <div class="info-icon">🔮</div>
+                                <h3>Start Your Journey</h3>
+                                <p>Click <strong>Analyze & Generate Quest</strong> to let our AI Goal Agent inspect your spending footprint, build a personalized budget challenge, and select a reward product.</p>
+                            </div>
+
+                            <!-- Loader -->
+                            <div id="loader" class="loader-container hidden">
+                                <div class="spinner"></div>
+                                <p id="loader-text">Analyzing financial footprint...</p>
+                            </div>
+
+                            <!-- Quest Card -->
+                            <div id="quest-card" class="glass-card result-card hidden">
+                                <div class="card-header-flex">
+                                    <div class="card-badge">ACTIVE QUEST</div>
+                                    <span id="quest-status-badge" class="status-badge success-bg">ON TRACK</span>
+                                </div>
+                                <h3 id="quest-category-title">🎯 Food & Dining Quest</h3>
+                                <p id="quest-analysis" class="analysis-text"></p>
+                                
+                                <div class="quest-details">
+                                    <div class="detail-item">
+                                        <span class="label">Target Limit</span>
+                                        <span class="value" id="quest-target">₹3,000</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="label">Reduction</span>
+                                        <span class="value accent" id="quest-reduction">20% Off</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="label">Duration</span>
+                                        <span class="value" id="quest-duration">7 Days</span>
+                                    </div>
+                                </div>
+
+                                <div class="reward-preview">
+                                    🎁 Reward Product: <strong id="quest-reward-name">SBI Mutual Fund SIP</strong>
+                                </div>
+
+                                <!-- Progress Simulation Panel -->
+                                <div class="simulation-panel">
+                                    <h4>Simulate Daily Check-In</h4>
+                                    <p class="sim-desc">Simulate days passing and actual spend to trigger behavioral drift evaluation.</p>
+                                    <div class="sim-grid">
+                                        <div class="sim-input-item">
+                                            <span class="label">Day</span>
+                                            <div class="number-stepper">
+                                                <button id="btn-day-down">-</button>
+                                                <span id="sim-day-val">1</span>
+                                                <button id="btn-day-up">+</button>
+                                            </div>
+                                        </div>
+                                        <div class="sim-input-item">
+                                            <span class="label">Simulated Category Spend (₹)</span>
+                                            <input type="number" id="sim-spend-input" value="300" class="input-sm">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="sim-actions">
+                                        <button id="btn-check-progress" class="btn primary-btn btn-sm btn-full">Check Progress & Check-In</button>
+                                    </div>
+                                </div>
+
+                                <!-- Recovery Quest Card (Displays conditionally if behind) -->
+                                <div id="recovery-quest-container" class="recovery-box hidden">
+                                    <div class="recovery-header">⚠️ Behavioral Drift Detected!</div>
+                                    <p id="recovery-summary" class="recovery-text"></p>
+                                    <div class="recovery-challenge">
+                                        <strong>Active Recovery Quest:</strong>
+                                        <p id="recovery-quest-description"></p>
+                                    </div>
+                                </div>
+
+                                <div class="card-actions">
+                                    <button id="complete-quest-btn" class="btn success-btn">Simulate Quest Completion</button>
+                                </div>
+                            </div>
+
+                            <!-- Product Unlock Screen -->
+                            <div id="unlock-screen" class="glass-card success-card hidden">
+                                <div class="confetti-effect">🎉</div>
+                                <h2>Quest Accomplished!</h2>
+                                <p class="success-desc">Excellent control on your spending. You have successfully unlocked your investment reward tier!</p>
+                                
+                                <div class="unlocked-badge">
+                                    <div class="shield-icon">🛡️</div>
+                                    <h3 id="unlocked-product-title">SBI Mutual Fund SIP</h3>
+                                    <p>Reward Product Ready for Activation</p>
+                                </div>
+
+                                <button id="unlock-learning-btn" class="btn primary-btn">Reveal Product Card & Explainer</button>
+                            </div>
+
+                            <!-- Learning Card -->
+                            <div id="learning-card" class="glass-card learning-card-style hidden">
+                                <div class="learning-badge">LEARNING GATE UNLOCKED</div>
+                                <h3 id="learn-product-name">SBI Mutual Fund SIP</h3>
+                                <p id="learn-product-subtitle" class="product-subtitle">Smart wealth creation in tiny steps</p>
+                                
+                                <div class="explainer-section">
+                                    <h4>⚡ 30-Second Explainer</h4>
+                                    <p id="learn-explainer"></p>
+                                </div>
+
+                                <div class="benefits-section">
+                                    <h4>💎 Key Benefits</h4>
+                                    <ul id="learn-benefits-list">
+                                        <!-- Populated via JS -->
+                                    </ul>
+                                </div>
+
+                                <div class="card-actions">
+                                    <button id="invest-now-btn" class="btn primary-btn pulse-glow">Activate & Invest Now (SBI YONO Deep Link)</button>
+                                    <button id="reset-flow-btn" class="btn secondary-btn">Restart Journey</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: WhatsApp Simulator -->
+                <div id="cust-whatsapp" class="tab-panel">
+                    <div class="whatsapp-layout">
+                        <div class="phone-mockup">
+                            <div class="phone-header">
+                                <div class="camera-lens"></div>
+                                <div class="phone-status-bar">
+                                    <span>SBI Mobile</span>
+                                    <span>18:22</span>
+                                    <span>🔋 85%</span>
+                                </div>
+                                <div class="phone-chat-info">
+                                    <button class="back-arrow">◀</button>
+                                    <div class="chat-avatar">🤖</div>
+                                    <div class="chat-contact">
+                                        <span class="chat-name">SBI Financial Coach</span>
+                                        <span class="chat-status">Online</span>
+                                    </div>
+                                    <span class="chat-menu">⋮</span>
+                                </div>
+                            </div>
+                            
+                            <div class="phone-chat-body" id="whatsapp-chat-body">
+                                <div class="chat-date">TODAY</div>
+                                <div class="message received">
+                                    <div class="msg-content">Welcome to SBI See Beyond Income! I will send you smart, non-intrusive motivational nudges here based on your quest progress. Keep checking in!</div>
+                                    <div class="msg-time">10:00</div>
+                                </div>
+                                <!-- Dynamic messages populate here -->
+                            </div>
+                            
+                            <div class="phone-chat-input-bar">
+                                <span class="plus-icon">+</span>
+                                <input type="text" placeholder="Type a message..." disabled>
+                                <span class="send-icon">🎙️</span>
+                            </div>
+                        </div>
+                        
+                        <div class="whatsapp-desc glass-card">
+                            <h3>🤖 Behavioral Motivation Agent</h3>
+                            <p>This panel simulates real-time WhatsApp integration using the bank's Motivation Agent.</p>
+                            <p>Whenever you check-in and the Behavioral Agent detects a **spending drift (Behind)**, the Motivation Agent runs to formulate an encouraging, empathetic notification.</p>
+                            <div class="whatsapp-info-box">
+                                <strong>Message Tone Rules:</strong>
+                                <ul>
+                                    <li>Empathetic & supportive (no guilt-tripping)</li>
+                                    <li>Under 40 words</li>
+                                    <li>Mentions specific spending gap and recovery challenge</li>
+                                </ul>
+                            </div>
+                            <button id="btn-clear-chat" class="btn secondary-btn">Clear Chat History</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: YONO Unlock / Product Gate -->
+                <div id="cust-yono" class="tab-panel">
+                    <div class="yono-layout text-center">
+                        <div class="glass-card">
+                            <h2>🛡️ YONO Digital Product Gateway</h2>
+                            <p>Successful quest completion unlocks pre-filled SBI YONO deep links for frictionless product adoption.</p>
+                            
+                            <div class="products-grid">
+                                <div class="product-item-card locked" id="prod-sip">
+                                    <div class="lock-indicator">🔒</div>
+                                    <h3>SBI Mutual Fund SIP</h3>
+                                    <p>Unlock by completing a Food & Dining quest.</p>
+                                </div>
+                                <div class="product-item-card locked" id="prod-savings">
+                                    <div class="lock-indicator">🔒</div>
+                                    <h3>SBI Savings Account Plus</h3>
+                                    <p>Unlock by completing a Utilities quest.</p>
+                                </div>
+                                <div class="product-item-card locked" id="prod-rd">
+                                    <div class="lock-indicator">🔒</div>
+                                    <h3>SBI Recurring Deposit</h3>
+                                    <p>Unlock by completing a Shopping quest.</p>
+                                </div>
+                                <div class="product-item-card locked" id="prod-insurance">
+                                    <div class="lock-indicator">🔒</div>
+                                    <h3>SBI Life Insurance</h3>
+                                    <p>Unlock by completing a Travel quest.</p>
+                                </div>
+                            </div>
+                            
+                            <p class="footnote">The platform rewards product adoptions with <strong>+1,000 XP</strong> and registers performance commission for the bank dashboard.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- BANK PORTAL -->
+        <main id="bank-portal" class="portal-view hidden">
+            <!-- BANK TAB CONTENTS -->
+            <div class="tab-content-container">
+                
+                <!-- TAB: Bank Analytics -->
+                <div id="bank-dashboard" class="tab-panel active">
+                    <!-- Bank KPIs Row -->
+                    <section class="bank-kpis-grid">
+                        <div class="glass-card kpi-card">
+                            <span class="kpi-icon">👥</span>
+                            <div>
+                                <span class="label">Engaged Customers</span>
+                                <h3 id="bank-kpi-customers">0</h3>
+                            </div>
+                        </div>
+                        <div class="glass-card kpi-card">
+                            <span class="kpi-icon">🎯</span>
+                            <div>
+                                <span class="label">Quest Success Rate</span>
+                                <h3 id="bank-kpi-success-rate">0%</h3>
+                            </div>
+                        </div>
+                        <div class="glass-card kpi-card">
+                            <span class="kpi-icon">💰</span>
+                            <div>
+                                <span class="label">Savings Generated</span>
+                                <h3 id="bank-kpi-savings">₹0.00</h3>
+                            </div>
+                        </div>
+                        <div class="glass-card kpi-card commission-kpi">
+                            <span class="kpi-icon">📈</span>
+                            <div>
+                                <span class="label">Platform Commission Revenue</span>
+                                <h3 id="bank-kpi-commission">₹0.00</h3>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Charts Row -->
+                    <section class="bank-charts-grid">
+                        <div class="glass-card chart-container">
+                            <h3>📊 Product Adoption Funnel</h3>
+                            <canvas id="chart-product-conversion"></canvas>
+                        </div>
+                        
+                        <div class="glass-card chart-container">
+                            <h3>🍩 Quest Category Breakdown</h3>
+                            <canvas id="chart-quest-categories"></canvas>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- TAB: Customer Directory -->
+                <div id="bank-customers" class="tab-panel">
+                    <div class="glass-card">
+                        <h2>👥 Customer Engagement Directory</h2>
+                        <p class="panel-desc">Review engagement levels, streaks, active quests, and latest delivered behavioral nudges for all program users.</p>
+                        
+                        <div class="table-container large-table-container">
+                            <table id="bank-customers-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Level</th>
+                                        <th>Streak</th>
+                                        <th>XP</th>
+                                        <th>Active Quest</th>
+                                        <th>Status</th>
+                                        <th>Latest WhatsApp Nudge</th>
+                                        <th>Total Savings (₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </main>
     </div>
+
     <script src="app.js"></script>
 </body>
 </html>
