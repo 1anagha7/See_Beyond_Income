@@ -19,3 +19,18 @@ class MotivationInput(BaseModel):
     days_left: int
     summary: str
     recovery_quest: str
+
+
+class Transaction(BaseModel):
+    amount: float
+    category: str
+    description: str
+    date: str
+
+
+class TransactionHistoryInput(BaseModel):
+    transactions: list[Transaction]
+
+
+class LearningInput(BaseModel):
+    product_name: str

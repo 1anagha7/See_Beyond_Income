@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBI See Beyond Income - Goal & Learning Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <span class="sbi-blue">SBI</span> <span class="accent-text">SeeBeyondIncome</span>
+            </div>
+            <p class="tagline">Empowering financial growth through behavioral intelligence</p>
+        </header>
+
+        <main class="dashboard-grid">
+            <!-- Left Panel: Transaction Input -->
+            <section class="panel transaction-panel glass-card">
+                <h2>📊 Mock Transaction History</h2>
+                <p class="panel-desc">Modify transactions below to test how the Goal Agent adapts its quest recommendations.</p>
+                
+                <div class="table-container">
+                    <table id="transactions-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Amount (₹)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Loaded dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="button-group">
+                    <button id="add-row-btn" class="btn secondary-btn">+ Add Transaction</button>
+                    <button id="generate-quest-btn" class="btn primary-btn pulse-glow">Analyze & Generate Quest</button>
+                </div>
+            </section>
+
+            <!-- Right Panel: Dynamic Display -->
+            <section class="panel display-panel">
+                <!-- Idle State Message -->
+                <div id="idle-card" class="glass-card info-card">
+                    <div class="info-icon">🔮</div>
+                    <h3>Start Your Journey</h3>
+                    <p>Click <strong>Analyze & Generate Quest</strong> to let our AI Goal Agent inspect your spending footprint, build a personalized budget challenge, and select a reward product.</p>
+                </div>
+
+                <!-- Loader -->
+                <div id="loader" class="loader-container hidden">
+                    <div class="spinner"></div>
+                    <p id="loader-text">Analyzing financial footprint...</p>
+                </div>
+
+                <!-- Quest Card -->
+                <div id="quest-card" class="glass-card result-card hidden">
+                    <div class="card-badge">ACTIVE QUEST</div>
+                    <h3 id="quest-category-title">🎯 Food & Dining Quest</h3>
+                    <p id="quest-analysis" class="analysis-text"></p>
+                    
+                    <div class="quest-details">
+                        <div class="detail-item">
+                            <span class="label">Target Limit</span>
+                            <span class="value" id="quest-target">₹3,000</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Reduction</span>
+                            <span class="value accent" id="quest-reduction">20% Off</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Duration</span>
+                            <span class="value" id="quest-duration">7 Days</span>
+                        </div>
+                    </div>
+
+                    <div class="reward-preview">
+                        🎁 Potential Reward: <strong id="quest-reward-name">SBI Mutual Fund SIP</strong>
+                    </div>
+
+                    <div class="card-actions">
+                        <button id="complete-quest-btn" class="btn success-btn">Simulate Quest Completion</button>
+                    </div>
+                </div>
+
+                <!-- Product Unlock Screen -->
+                <div id="unlock-screen" class="glass-card success-card hidden">
+                    <div class="confetti-effect">🎉</div>
+                    <h2>Quest Accomplished!</h2>
+                    <p class="success-desc">Excellent control on your spending. You have successfully unlocked your investment reward tier!</p>
+                    
+                    <div class="unlocked-badge">
+                        <div class="shield-icon">🛡️</div>
+                        <h3 id="unlocked-product-title">SBI Mutual Fund SIP</h3>
+                        <p>Reward Product Ready for Activation</p>
+                    </div>
+
+                    <button id="unlock-learning-btn" class="btn primary-btn">Reveal Product Card & Explainer</button>
+                </div>
+
+                <!-- Learning Card -->
+                <div id="learning-card" class="glass-card learning-card-style hidden">
+                    <div class="learning-badge">LEARNING GATE UNLOCKED</div>
+                    <h3 id="learn-product-name">SBI Mutual Fund SIP</h3>
+                    <p id="learn-product-subtitle" class="product-subtitle">Smart wealth creation in tiny steps</p>
+                    
+                    <div class="explainer-section">
+                        <h4>⚡ 30-Second Explainer</h4>
+                        <p id="learn-explainer"></p>
+                    </div>
+
+                    <div class="benefits-section">
+                        <h4>💎 Key Benefits</h4>
+                        <ul id="learn-benefits-list">
+                            <!-- Populated via JS -->
+                        </ul>
+                    </div>
+
+                    <div class="card-actions">
+                        <button id="invest-now-btn" class="btn primary-btn">Start Investing Now</button>
+                        <button id="reset-flow-btn" class="btn secondary-btn">Restart Journey</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
