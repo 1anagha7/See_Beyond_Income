@@ -9,19 +9,19 @@ MODEL_NAME = "gemini-2.5-flash"
 
 class LearningAgent:
     """
-    Learning Agent
+    FinPilot Adaptive Learning Agent
     Responsibilities:
-    - Generate 30-second explainers.
-    - Create product cards features and taglines.
-    - Assist in unlocking learning gates.
+    - Analyzes user's spending struggle and active quest.
+    - Dynamically selects an educational topic (SIP, Emergency Fund, Subscription Audit, etc.).
+    - Generates a tailored 30-second explainer with key takeaways and an actionable next step.
     """
 
     def generate_learning_card(self, data: LearningInput):
-        """
-        Generate a 30-second explainer and product card details.
-        """
         prompt = f"""
-Product Name: {data.product_name}
+USER FINANCIAL CONTEXT:
+- Spending Category: {data.category}
+- Active Quest: {data.quest_title}
+- Financial Struggle / Context: {data.struggle_context}
 
 {learning_prompt}
 """
@@ -45,27 +45,31 @@ Product Name: {data.product_name}
             return json.loads(clean_text)
 
         except Exception as e:
-            print(f"[LearningAgent Error] {e}")
-            # Fallback learning details
+            print(f"[FinPilot LearningAgent Error] {e}")
+            # Fallback adaptive content
             return {
-                "product_name": data.product_name,
-                "subtitle": "Smart wealth creation in tiny steps",
-                "explainer": f"The {data.product_name} allows you to grow your wealth systematically. By investing a small amount regularly, you benefit from compounding interest and rupee cost averaging, making financial growth effortless and disciplined over time.",
-                "benefits": [
-                    "Start with as little as ₹500/month",
-                    "Compounding growth over time",
-                    "Automated, hassle-free investments"
-                ]
+                "topic_title": "Automated Micro-Investing (SIP)",
+                "subtitle": "Turn your saved quest money into compound wealth",
+                "explainer_30s": f"By completing your '{data.quest_title}' quest, you free up cash flow. Instead of letting it sit idle, automatically channeling it into a Systematic Investment Plan (SIP) uses compounding interest to grow your savings exponentially without manual effort.",
+                "key_takeaways": [
+                    "Automated monthly or weekly contributions",
+                    "Dollar-cost averaging reduces market volatility risk",
+                    "Compounding turns small savings into substantial capital"
+                ],
+                "recommended_action": "Set up a ₹500 recurring monthly auto-sip with your quest savings."
             }
 
     def run(self, data: LearningInput):
-        """
-        Complete Learning Agent workflow.
-        """
         return self.generate_learning_card(data)
 
+
 if __name__ == "__main__":
-    sample_data = LearningInput(product_name="SBI Mutual Fund SIP")
+    sample_data = LearningInput(
+        category="Food & Dining",
+        quest_title="Trim Weekend Dining",
+        struggle_context="72% of food spend happens on weekend impulse orders."
+    )
     agent = LearningAgent()
     result = agent.run(sample_data)
-    print(json.dumps(result, indent=4, ensure_ascii=False))
+    print(json.dumps(result, indent=4, ensure_ascii=True))
+

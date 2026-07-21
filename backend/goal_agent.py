@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from google import genai
 from schemas import TransactionHistoryInput
 from config import GEMINI_API_KEY
@@ -7,30 +8,94 @@ from prompts import goal_prompt
 client = genai.Client(api_key=GEMINI_API_KEY)
 MODEL_NAME = "gemini-2.5-flash"
 
-class GoalAgent:
+class DataProcessingEngine:
     """
-    Goal Agent
-    Responsibilities:
-    - Analyze transaction history.
-    - Identify top spending categories.
-    - Generate personalized quests.
-    - Decide reward product.
+    Deterministic Analytics & Behavior Processing Engine
+    Calculates statistical facts from raw transactions before passing to LLM.
     """
 
+    @staticmethod
+    def analyze_transactions(transactions):
+        total_spend = 0.0
+        category_totals = {}
+        weekend_spend = {}
+        weekday_spend = {}
+        recurring_transactions = []
+
+        subscription_keywords = ["netflix", "spotify", "prime", "sub", "membership", "bill", "recharge"]
+
+        for tx in transactions:
+            amount = tx.amount
+            category = tx.category.strip()
+            desc = tx.description.lower()
+            date_str = tx.date
+
+            total_spend += amount
+
+            # Category totals
+            category_totals[category] = category_totals.get(category, 0.0) + amount
+
+            # Check weekend (5 = Saturday, 6 = Sunday)
+            is_weekend = False
+            try:
+                dt = datetime.strptime(date_str, "%Y-%m-%d")
+                if dt.weekday() >= 5 or "friday night" in desc:
+                    is_weekend = True
+            except Exception:
+                pass
+
+            if is_weekend:
+                weekend_spend[category] = weekend_spend.get(category, 0.0) + amount
+            else:
+                weekday_spend[category] = weekday_spend.get(category, 0.0) + amount
+
+            # Recurring / Subscription check
+            if any(kw in desc for kw in subscription_keywords):
+                recurring_transactions.append({"desc": tx.description, "amount": amount, "category": category})
+
+        # Top Category
+        top_category = max(category_totals, key=category_totals.get) if category_totals else "General"
+        top_cat_total = category_totals.get(top_category, 0.0)
+        top_cat_weekend = weekend_spend.get(top_category, 0.0)
+        top_cat_weekend_pct = round((top_cat_weekend / top_cat_total * 100), 1) if top_cat_total > 0 else 0
+
+        analytics_summary = {
+            "total_spend": round(total_spend, 2),
+            "top_category": top_category,
+            "top_category_spend": round(top_cat_total, 2),
+            "top_category_weekend_spend": round(top_cat_weekend, 2),
+            "top_category_weekend_pct": top_cat_weekend_pct,
+            "category_breakdown": {k: round(v, 2) for k, v in category_totals.items()},
+            "recurring_detected": recurring_transactions
+        }
+
+        return analytics_summary
+
+
+class GoalAgent:
+    """
+    FinPilot Goal Agent
+    Responsibilities:
+    - Run Deterministic Analytics Engine.
+    - Feed computed facts to Gemini for explainable quest design.
+    - Return actionable mission with data-backed reasoning.
+    """
+
+    def __init__(self):
+        self.engine = DataProcessingEngine()
+
     def generate_quest(self, data: TransactionHistoryInput):
-        """
-        Generate a personalized quest and reward product based on transaction history.
-        """
-        # Format transaction data into string for prompt
-        tx_list = []
-        for tx in data.transactions:
-            tx_list.append(f"- Date: {tx.date}, Category: {tx.category}, Amount: ₹{tx.amount}, Description: {tx.description}")
-        
-        tx_str = "\n".join(tx_list)
-        
+        # 1. Deterministic Analysis Engine
+        analytics = self.engine.analyze_transactions(data.transactions)
+
+        # 2. Formulate Prompt with Pre-computed Analytics
         prompt = f"""
-Customer Transaction History:
-{tx_str}
+DETERMINISTIC ANALYTICS SUMMARY:
+- Total Spending across all categories: ₹{analytics['total_spend']:,.2f}
+- Highest Spending Category: {analytics['top_category']} (₹{analytics['top_category_spend']:,.2f})
+- Weekend Spending in {analytics['top_category']}: ₹{analytics['top_category_weekend_spend']:,.2f} ({analytics['top_category_weekend_pct']}% of category total)
+- Category Breakdown: {json.dumps(analytics['category_breakdown'])}
+- Recurring Subscriptions Found: {json.dumps(analytics['recurring_detected'])}
 
 {goal_prompt}
 """
@@ -51,41 +116,44 @@ Customer Transaction History:
                 .strip()
             )
 
-            return json.loads(clean_text)
+            result = json.loads(clean_text)
+            # Attach analytics engine output to response for frontend dashboard visualization
+            result["analytics"] = analytics
+            return result
 
         except Exception as e:
-            print(f"[GoalAgent Error] {e}")
-            # Fallback quest if LLM call fails
+            print(f"[FinPilot GoalAgent Error] {e}")
+            top_cat = analytics['top_category']
+            top_total = analytics['top_category_spend']
+            wknd_pct = analytics['top_category_weekend_pct']
+            target = round(top_total * 0.2, 2)
+
             return {
-                "analysis": "Based on your spending, we noticed a high amount of minor food expenses. Setting a target can help redirect these funds into savings.",
-                "top_category": "Food & Dining",
-                "quest": {
-                    "category": "Food & Dining",
-                    "target": 3000.0,
-                    "reduction_percentage": 15,
-                    "duration": 7,
-                    "reward": "SBI Mutual Fund SIP"
-                }
+                "quest_title": f"Trim {top_cat} Spending",
+                "top_category": top_cat,
+                "target_reduction": target,
+                "duration_days": 7,
+                "why_reasoning": f"You spent ₹{top_total:,.0f} on {top_cat}, and {wknd_pct}% occurred over weekends. Reducing just 2 impulse orders will save ₹{target:,.0f}.",
+                "reward_product": "FinPilot Automated SIP",
+                "analytics": analytics
             }
 
     def run(self, data: TransactionHistoryInput):
-        """
-        Complete Goal Agent workflow.
-        """
         return self.generate_quest(data)
+
 
 if __name__ == "__main__":
     from schemas import Transaction
-    # Simple self-test
     sample_data = TransactionHistoryInput(
         transactions=[
-            Transaction(amount=500.0, category="Food", description="Zomato order", date="2026-07-01"),
-            Transaction(amount=1200.0, category="Food", description="Dinner out", date="2026-07-02"),
-            Transaction(amount=2000.0, category="Shopping", description="New shirt", date="2026-07-03"),
-            Transaction(amount=450.0, category="Food", description="Coffee shop", date="2026-07-04"),
-            Transaction(amount=150.0, category="Travel", description="Uber ride", date="2026-07-05"),
+            Transaction(amount=850.0, category="Food & Dining", description="Zomato Order", date="2026-07-11"),
+            Transaction(amount=2400.0, category="Food & Dining", description="Friday Night Dinner", date="2026-07-10"),
+            Transaction(amount=1200.0, category="Shopping", description="Amazon Purchase", date="2026-07-12"),
+            Transaction(amount=650.0, category="Food & Dining", description="Swiggy Weekend", date="2026-07-11"),
+            Transaction(amount=300.0, category="Transport", description="Uber Ride", date="2026-07-13"),
         ]
     )
     agent = GoalAgent()
     result = agent.run(sample_data)
-    print(json.dumps(result, indent=4, ensure_ascii=False))
+    print(json.dumps(result, indent=4, ensure_ascii=True))
+

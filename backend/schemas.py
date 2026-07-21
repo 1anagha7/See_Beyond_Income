@@ -33,4 +33,7 @@ class TransactionHistoryInput(BaseModel):
 
 
 class LearningInput(BaseModel):
-    product_name: str
+    category: str = "General"
+    quest_title: str = "Budget Challenge"
+    struggle_context: str = "High discretionary spending"
+

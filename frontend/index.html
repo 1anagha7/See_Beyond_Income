@@ -3,25 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SBI See Beyond Income - Goal & Learning Intelligence</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>FinPilot - Agentic AI Financial Coach</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="glass-bg"></div>
     <div class="app-container">
+        <!-- Header -->
         <header class="app-header">
             <div class="logo">
-                <span class="sbi-blue">SBI</span> <span class="accent-text">SeeBeyondIncome</span>
+                <span class="brand-fin">Fin</span><span class="brand-pilot">Pilot</span>
+                <span class="ai-badge">AGENTIC AI COACH</span>
             </div>
-            <p class="tagline">Empowering financial growth through behavioral intelligence</p>
+            <p class="tagline">Deterministic Financial Analytics • Explainable Missions • Adaptive Micro-Learning</p>
         </header>
 
         <main class="dashboard-grid">
-            <!-- Left Panel: Transaction Input -->
+            <!-- Left Panel: Transactions & Data Analytics Engine -->
             <section class="panel transaction-panel glass-card">
-                <h2>📊 Mock Transaction History</h2>
-                <p class="panel-desc">Modify transactions below to test how the Goal Agent adapts its quest recommendations.</p>
+                <div class="panel-header">
+                    <h2>📥 Transaction Feed</h2>
+                    <span class="engine-tag">Deterministic Analytics Engine Active</span>
+                </div>
+                <p class="panel-desc">Modify transactions below (dates, descriptions, amounts) to test how the engine detects weekend spikes and recurring subscriptions.</p>
                 
                 <div class="table-container">
                     <table id="transactions-table">
@@ -31,7 +36,7 @@
                                 <th>Category</th>
                                 <th>Description</th>
                                 <th>Amount (₹)</th>
-                                <th>Action</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -42,91 +47,113 @@
 
                 <div class="button-group">
                     <button id="add-row-btn" class="btn secondary-btn">+ Add Transaction</button>
-                    <button id="generate-quest-btn" class="btn primary-btn pulse-glow">Analyze & Generate Quest</button>
+                    <button id="generate-quest-btn" class="btn primary-btn pulse-glow">Run Engine & Generate Mission</button>
                 </div>
             </section>
 
-            <!-- Right Panel: Dynamic Display -->
+            <!-- Right Panel: Intelligent Output & Explainability -->
             <section class="panel display-panel">
                 <!-- Idle State Message -->
                 <div id="idle-card" class="glass-card info-card">
-                    <div class="info-icon">🔮</div>
-                    <h3>Start Your Journey</h3>
-                    <p>Click <strong>Analyze & Generate Quest</strong> to let our AI Goal Agent inspect your spending footprint, build a personalized budget challenge, and select a reward product.</p>
+                    <div class="info-icon">⚡</div>
+                    <h3>Multi-Agent Financial Coaching</h3>
+                    <p>Click <strong>Run Engine & Generate Mission</strong> to trigger the <strong>Data Processing Engine</strong>, analyze spending drift, generate explainable savings missions, and unlock adaptive learning.</p>
                 </div>
 
                 <!-- Loader -->
                 <div id="loader" class="loader-container hidden">
                     <div class="spinner"></div>
-                    <p id="loader-text">Analyzing financial footprint...</p>
+                    <p id="loader-text">Crunching transaction analytics...</p>
                 </div>
 
-                <!-- Quest Card -->
+                <!-- Quest & Explainability Card -->
                 <div id="quest-card" class="glass-card result-card hidden">
-                    <div class="card-badge">ACTIVE QUEST</div>
-                    <h3 id="quest-category-title">🎯 Food & Dining Quest</h3>
-                    <p id="quest-analysis" class="analysis-text"></p>
+                    <div class="card-badge">FINPILOT MISSION GENERATED</div>
+                    <h3 id="quest-title-text">🎯 Trim Weekend Dining</h3>
+                    
+                    <!-- Pre-computed Analytics Breakdown -->
+                    <div class="analytics-strip" id="analytics-strip">
+                        <div class="stat-pill">
+                            <span class="stat-label">Total Analyzed</span>
+                            <span class="stat-val" id="stat-total">₹0</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="stat-label">Top Category</span>
+                            <span class="stat-val" id="stat-top-cat">Dining</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="stat-label">Weekend Share</span>
+                            <span class="stat-val highlight" id="stat-weekend-pct">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- Explainability Section ("The WHY") -->
+                    <div class="explainability-box">
+                        <div class="box-title">🧠 EXPLAINABLE AI REASONING (WHY THIS GOAL?)</div>
+                        <p id="quest-why-reasoning" class="reasoning-text"></p>
+                    </div>
                     
                     <div class="quest-details">
                         <div class="detail-item">
-                            <span class="label">Target Limit</span>
-                            <span class="value" id="quest-target">₹3,000</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="label">Reduction</span>
-                            <span class="value accent" id="quest-reduction">20% Off</span>
+                            <span class="label">Target Reduction</span>
+                            <span class="value accent" id="quest-target-reduction">₹0</span>
                         </div>
                         <div class="detail-item">
                             <span class="label">Duration</span>
                             <span class="value" id="quest-duration">7 Days</span>
                         </div>
-                    </div>
-
-                    <div class="reward-preview">
-                        🎁 Potential Reward: <strong id="quest-reward-name">SBI Mutual Fund SIP</strong>
+                        <div class="detail-item">
+                            <span class="label">Reward Aligned</span>
+                            <span class="value reward-val" id="quest-reward">SIP</span>
+                        </div>
                     </div>
 
                     <div class="card-actions">
-                        <button id="complete-quest-btn" class="btn success-btn">Simulate Quest Completion</button>
+                        <button id="complete-quest-btn" class="btn success-btn">Simulate Mission Accomplished</button>
                     </div>
                 </div>
 
-                <!-- Product Unlock Screen -->
+                <!-- Mission Accomplished / Unlock Screen -->
                 <div id="unlock-screen" class="glass-card success-card hidden">
-                    <div class="confetti-effect">🎉</div>
-                    <h2>Quest Accomplished!</h2>
-                    <p class="success-desc">Excellent control on your spending. You have successfully unlocked your investment reward tier!</p>
+                    <div class="confetti-effect">🚀</div>
+                    <h2>Mission Accomplished!</h2>
+                    <p class="success-desc">You kept your spending in check. Your disciplined habits have unlocked a custom financial micro-lesson!</p>
                     
                     <div class="unlocked-badge">
-                        <div class="shield-icon">🛡️</div>
-                        <h3 id="unlocked-product-title">SBI Mutual Fund SIP</h3>
-                        <p>Reward Product Ready for Activation</p>
+                        <div class="shield-icon">🎓</div>
+                        <h3 id="unlocked-product-title">Adaptive Educational Gate Unlocked</h3>
+                        <p>Personalized Micro-Lesson Ready</p>
                     </div>
 
-                    <button id="unlock-learning-btn" class="btn primary-btn">Reveal Product Card & Explainer</button>
+                    <button id="unlock-learning-btn" class="btn primary-btn">Launch Adaptive Micro-Lesson</button>
                 </div>
 
-                <!-- Learning Card -->
+                <!-- Adaptive Learning Card -->
                 <div id="learning-card" class="glass-card learning-card-style hidden">
-                    <div class="learning-badge">LEARNING GATE UNLOCKED</div>
-                    <h3 id="learn-product-name">SBI Mutual Fund SIP</h3>
-                    <p id="learn-product-subtitle" class="product-subtitle">Smart wealth creation in tiny steps</p>
+                    <div class="learning-badge">ADAPTIVE EDUCATIONAL RECOMMENDER</div>
+                    <h3 id="learn-topic-title">Topic Title</h3>
+                    <p id="learn-subtitle" class="product-subtitle">Short Tagline</p>
                     
                     <div class="explainer-section">
-                        <h4>⚡ 30-Second Explainer</h4>
+                        <h4>⚡ 30-Second Micro-Lesson</h4>
                         <p id="learn-explainer"></p>
                     </div>
 
                     <div class="benefits-section">
-                        <h4>💎 Key Benefits</h4>
-                        <ul id="learn-benefits-list">
+                        <h4>💡 Key Takeaways</h4>
+                        <ul id="learn-takeaways-list">
                             <!-- Populated via JS -->
                         </ul>
                     </div>
 
+                    <div class="action-box">
+                        <span class="action-label">RECOMMENDED NEXT STEP</span>
+                        <p id="learn-recommended-action" class="action-text"></p>
+                    </div>
+
                     <div class="card-actions">
-                        <button id="invest-now-btn" class="btn primary-btn">Start Investing Now</button>
-                        <button id="reset-flow-btn" class="btn secondary-btn">Restart Journey</button>
+                        <button id="invest-now-btn" class="btn primary-btn">Execute Next Step</button>
+                        <button id="reset-flow-btn" class="btn secondary-btn">Restart Mission Control</button>
                     </div>
                 </div>
             </section>
